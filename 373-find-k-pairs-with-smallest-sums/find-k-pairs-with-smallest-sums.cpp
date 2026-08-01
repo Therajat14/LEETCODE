@@ -7,7 +7,9 @@ public:
         greater<vector<int>>
         > pq;
 
-        for(int i = 0; i < nums2.size(); i++){
+        int x = nums2.size();
+
+        for(int i = 0; i < min(x, k); i++){
             pq.push({nums1[0] + nums2[i], 0, i});
         }
 
