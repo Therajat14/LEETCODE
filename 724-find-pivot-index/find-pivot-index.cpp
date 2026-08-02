@@ -3,20 +3,18 @@ public:
     int pivotIndex(vector<int>& nums) {
         int n = nums.size();
 
-        int sum = 0;
-        vector<int> rightSum(n, 0);
-         
+        int Rsum = 0;        
         
         for(int i = n - 1; i >= 0; i--){
-            sum += nums[i];
-            rightSum[i] = sum;
+            Rsum += nums[i];
         }
 
-        sum = 0;
+        int Lsum = 0;
 
         for(int i = 0; i < n; i++){
-            if(sum == rightSum[i] - nums[i]) return i;
-            sum += nums[i];
+            if(Lsum == Rsum - nums[i]) return i;
+            Lsum += nums[i];
+            Rsum -= nums[i];
         }
 
         return -1;
