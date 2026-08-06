@@ -3,40 +3,45 @@ public:
     vector<int> getOrder(vector<vector<int>>& tasks) {
         int n = tasks.size();
 
+        // {enqueueTime, processingTime, index}
         priority_queue<
             vector<int>,
             vector<vector<int>>,
             greater<vector<int>>
-        > tasksHeap;
+        > taskHeap;
 
-        for (int i = 0; i < n; i++)
-            tasksHeap.push({tasks[i][0], tasks[i][1], i});
+        for (int i = 0; i < n; i++) {
+            taskHeap.push({tasks[i][0], tasks[i][1], i});
+        }
 
+        // {processingTime, index}
         priority_queue<
-            pair<int, int>,
-            vector<pair<int, int>>,
-            greater<pair<int, int>>
-        > availableTasks;
+            pair<int,int>,
+            vector<pair<int,int>>,
+            greater<pair<int,int>>
+        > available;
 
-        long long time = 0;
         vector<int> ans;
+        long long time = 0;
 
-        while (!tasksHeap.empty() || !availableTasks.empty()) {
+        while (!taskHeap.empty() || !available.empty()) {
 
-            // Jump to next arrival if CPU is idle
-            if (availableTasks.empty() && time < tasksHeap.top()[0])
-                time = tasksHeap.top()[0];
-
-            // Add all tasks that have arrived
-            while (!tasksHeap.empty() && tasksHeap.top()[0] <= time) {
-                availableTasks.push({tasksHeap.top()[1], tasksHeap.top()[2]});
-                tasksHeap.pop();
+            // If CPU is idle and no available task,
+            // jump directly to the next task's arrival.
+            if (available.empty() && time < taskHeap.top()[0]) {
+                time = taskHeap.top()[0];
             }
 
-            // Execute shortest task
-            if (!availableTasks.empty()) {
-                auto [processingTime, index] = availableTasks.top();
-                availableTasks.pop();
+            // Move every task that has already arrived.
+            while (!taskHeap.empty() && taskHeap.top()[0] <= time) {
+                available.push({taskHeap.top()[1], taskHeap.top()[2]});
+                taskHeap.pop();
+            }
+
+            // Execute the shortest available task.
+            if (!available.empty()) {
+                auto [processingTime, index] = available.top();
+                available.pop();
 
                 ans.push_back(index);
                 time += processingTime;
