@@ -1,18 +1,15 @@
 class Solution {
 public:
     vector<int> getOrder(vector<vector<int>>& tasks) {
+
         int n = tasks.size();
 
-        // {enqueueTime, processingTime, index}
-        priority_queue<
-            vector<int>,
-            vector<vector<int>>,
-            greater<vector<int>>
-        > taskHeap;
+        // Add original index to each task
+        for (int i = 0; i < n; i++)
+            tasks[i].push_back(i);
 
-        for (int i = 0; i < n; i++) {
-            taskHeap.push({tasks[i][0], tasks[i][1], i});
-        }
+        // Sort by enqueue time
+        sort(tasks.begin(), tasks.end());
 
         // {processingTime, index}
         priority_queue<
@@ -22,30 +19,28 @@ public:
         > available;
 
         vector<int> ans;
+
         long long time = 0;
+        int i = 0;
 
-        while (!taskHeap.empty() || !available.empty()) {
+        while (i < n || !available.empty()) {
 
-            // If CPU is idle and no available task,
-            // jump directly to the next task's arrival.
-            if (available.empty() && time < taskHeap.top()[0]) {
-                time = taskHeap.top()[0];
+            // CPU idle -> jump to next task arrival
+            if (available.empty() && time < tasks[i][0])
+                time = tasks[i][0];
+
+            // Add every task that has arrived
+            while (i < n && tasks[i][0] <= time) {
+                available.push({tasks[i][1], tasks[i][2]});
+                i++;
             }
 
-            // Move every task that has already arrived.
-            while (!taskHeap.empty() && taskHeap.top()[0] <= time) {
-                available.push({taskHeap.top()[1], taskHeap.top()[2]});
-                taskHeap.pop();
-            }
+            // Execute shortest task
+            auto [processingTime, index] = available.top();
+            available.pop();
 
-            // Execute the shortest available task.
-            if (!available.empty()) {
-                auto [processingTime, index] = available.top();
-                available.pop();
-
-                ans.push_back(index);
-                time += processingTime;
-            }
+            ans.push_back(index);
+            time += processingTime;
         }
 
         return ans;
