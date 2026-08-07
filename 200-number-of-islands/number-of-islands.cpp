@@ -1,41 +1,28 @@
 class Solution {
 public:
-
     vector<int> dsu;
 
-    int find(int x){
-        if(dsu[x] < 0) return x;
+    int find(int x) {
+        if (dsu[x] < 0)
+            return x;
+
         return dsu[x] = find(dsu[x]);
     }
 
-    void unionSet(int u, int v){
-        int pu = find(u); 
+    void unionSet(int u, int v) {
+        int pu = find(u);
         int pv = find(v);
 
-        if(pu == pv) return;
+        if (pu == pv)
+            return;
+
         
-    }
-
-    void bfs(vector<vector<char>>& grid, int i, int j, int m, int n){
-        queue<pair<int, int>> q;
-        q.push({i, j});
-
-        int dx[4] = {-1, 1, 0, 0};
-        int dy[4] = {0, 0, -1, 1};
-
-        while(!q.empty()){  
-            auto [x,y] = q.front(); q.pop();
-
-            for(int i = 0; i < 4; i++){
-                int nx = x + dx[i];
-                int ny = y + dy[i];
-
-                if(nx < 0 || ny < 0 || nx >= m || ny >= n || grid[nx][ny] == '0') 
-                    continue;
-                
-                q.push({nx, ny});
-                grid[nx][ny] = '0';
-            }
+        if (dsu[pu] < dsu[pv]) {
+            dsu[pu] += dsu[pv];
+            dsu[pv] = pu;
+        } else {
+            dsu[pv] += dsu[pu];
+            dsu[pu] = pv;
         }
     }
 
@@ -43,17 +30,50 @@ public:
         int m = grid.size();
         int n = grid[0].size();
 
-        int count = 0;
+        dsu.assign(m * n, -1);
 
-        for(int i = 0; i < m; i++){
-            for(int j = 0; j < n; j++){
-                if(grid[i][j] == '1'){
-                        bfs(grid, i, j, m, n);
-                        count++;
+        int islands = 0;
+
+        // Count all land cells
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == '1')
+                    islands++;
+            }
+        }
+
+        // Only check right and down
+        int dx[2] = {1, 0};
+        int dy[2] = {0, 1};
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+
+                if (grid[i][j] == '0')
+                    continue;
+
+                int id1 = i * n + j;
+
+                for (int k = 0; k < 2; k++) {
+                    int nx = i + dx[k];
+                    int ny = j + dy[k];
+
+                    if (nx >= m || ny >= n)
+                        continue;
+
+                    if (grid[nx][ny] == '0')
+                        continue;
+
+                    int id2 = nx * n + ny;
+
+                    if (find(id1) != find(id2)) {
+                        unionSet(id1, id2);
+                        islands--;
+                    }
                 }
             }
         }
 
-        return count;
+        return islands;
     }
 };
