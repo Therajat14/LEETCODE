@@ -13,15 +13,12 @@ public:
         sort(s.begin(), s.end());
 
         for(int i = 0; i < m; i++){
-        
-            if(j >= n) return count;
-
             while( j < n && s[j] < g[i]) j++;
-            if(j < n){
-                count ++; j++;
-            }
+            if(j == n) break;
+            count++;
+            j++;
         }
 
-        return m;
+        return count;
     }
 };
