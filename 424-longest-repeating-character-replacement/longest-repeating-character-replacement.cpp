@@ -20,10 +20,7 @@ public:
             if(end - start + 1 > maxC + k){
                      hash[s[start] - 'A']--;
                      start++;
-                     maxC = 0;
-
-                     for(int i = 0; i < 26; i++)
-                      maxC  = max(maxC, hash[i]);                     
+                     maxC = 0;                     
                 }
             
 
