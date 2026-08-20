@@ -17,7 +17,7 @@ public:
             for(int i = 0; i < 26; i++)
                 maxC  = max(maxC, hash[i]);
 
-            while(end - start + 1 > maxC + k){
+            if(end - start + 1 > maxC + k){
                      hash[s[start] - 'A']--;
                      start++;
                      maxC = 0;
