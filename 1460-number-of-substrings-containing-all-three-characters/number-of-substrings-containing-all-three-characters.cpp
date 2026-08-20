@@ -1,20 +1,19 @@
 class Solution {
 public:
     int numberOfSubstrings(string s) {
-        int left = 0;
         int ans = 0;
         int n = s.size();
 
-        vector<int> hash(3,0);
+        vector<int> hash(3,-1);
         
         for(int right = 0; right < n; right++){
-            hash[s[right] - 'a']++;
+            hash[s[right] - 'a'] = right;
 
-            while(hash[0] && hash[1] && hash[2]){
-                ans+= n - right;
-                hash[s[left] - 'a']--;
-                left++;
-            }
+            int sc = min(hash['a'-'a'], min(hash['b' - 'a'], hash['c' - 'a']));
+
+            ans += 1 + sc;
+
+           
         }
 
         return ans;
